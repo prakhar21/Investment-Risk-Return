@@ -1,4 +1,4 @@
-# Investment Risk-Return Calculation
+# Investment Risk-Return Analysis
 
 <p align="center">
   <img src="https://github.com/prakhar21/Investment-Risk-Return/blob/master/investment.png" width="450" height="300" title="hover text">
