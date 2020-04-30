@@ -6,8 +6,11 @@
 
 ### Setup
 ```
->> pip install nsepy==0.8.0
->> pip install Flask==1.1.1
+>> pip install numpy
+>> pip install pandas
+>> pip install yfinance
+>> pip install flask_cors
+>> pip install Flask
 ```
 
 ### Steps to Run
@@ -17,6 +20,11 @@
 
 ### APIs
 1. __app.py__ exposes just 1 endpoint (__/getmetrics__)
+
+### Demo
+<p align="center">
+  <img src="https://github.com/prakhar21/Investment-Risk-Return/blob/master/sharpe_sortino.gif" width="650" height="460" title="Investment Featured Image">
+</p>
 
 _P.S. Currently there is no database connectivity. Incase, you need to store the values, Feel free to extend it._
 
