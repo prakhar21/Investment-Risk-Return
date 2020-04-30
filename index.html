@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Investment Risk-Return Analysis</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+  <style type="text/css">
+    .textbuttons {
+      text-align: center;
+    } 
+    .form-control{
+      font-family: 'roboto';
+      font-size: 22px;
+    }
+    .info{
+     float: center;
+     text-align: center;
+    }
+    #out{
+     text-align: center; 
+      font-family: 'roboto';
+      font-size: 20px;
+    }
+    .slidecontainer {
+      width: 10%; /* Width of the outside container */
+    }
+
+    /* The slider itself */
+    .slider {
+      -webkit-appearance: none;  /* Override default CSS styles */
+      appearance: none;
+      width: 100%; /* Full-width */
+      height: 5px; /* Specified height */
+      background: #d3d3d3; /* Grey background */
+      outline: none; /* Remove outline */
+      opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+      -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+      transition: opacity .2s;
+    }
+
+    /* Mouse-over effects */
+    .slider:hover {
+      opacity: 1; /* Fully shown on mouse-over */
+    }
+
+    /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      appearance: none;
+      width: 15px; /* Set a specific slider handle width */
+      height: 15px; /* Slider handle height */
+      background: #EC971F; /* Green background */
+      cursor: pointer; /* Cursor on hover */
+    }
+
+    .slider::-moz-range-thumb {
+      width: 18px; /* Set a specific slider handle width */
+      height: 12px; /* Slider handle height */
+      background: #EC971F; /* Green background */
+      cursor: pointer; /* Cursor on hover */
+    }
+    .span{
+        text-align: right;
+    }
+    .box {
+      border-top: #ccc 1px solid;
+      border-right: #ccc 1px solid;
+      border-bottom: #ccc 1px solid;
+      border-left: #ccc 1px solid;
+      height: 300px;
+}
+.loader {
+  border: 10px solid #f3f3f3; /* Light grey */
+  border-top: 10px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+  </style>
+</head>
+<body>
+<div class="container">
+
+        <h1 class='display-1'><b>Risk Return Analysis</b></h2>
+        <div>
+          <p>This demo let's you compare multiple stocks in parallel based on it's <i>Sortino Ratio</i> and <i>Sharpe Ratio</i> values calculated on historical data.</p>
+          <p><b>Sharpe Ratio</b> : The Sharpe ratio was developed by Nobel laureate William F. Sharpe and is used to help investors understand the return of an investment compared to its risk. The ratio is the average return earned in excess of the risk-free rate per unit of volatility or total risk. - <a href="https://www.investopedia.com/terms/s/sharperatio.asp">Source: Investopedia </a></p>
+          <p><b>Sortino Ratio</b> : The Sortino ratio is a variation of the Sharpe ratio that differentiates harmful volatility from total overall volatility by using the asset's standard deviation of negative portfolio returns, called downside deviation, instead of the total standard deviation of portfolio returns. - <a href="https://www.investopedia.com/terms/s/sortinoratio.asp">Source: Investopedia</a></p>
+        </div>
+        <br>
+        <div class="textbuttons">
+          <label for="start_date">Start:</label>
+          <input type="date" id="start_date" name="start_date">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <label for="stop_date">End:</label>
+          <input type="date" id="stop_date" name="stop_date">
+        </div>
+
+        <div>
+            <table class='table table-borderless textbuttons'>
+              <thead></thead>
+              <tbody>
+                  <tr>
+                    <td>
+                        <div class="btn-group selection1">
+                          <button class="btn dropdown-toggle" data-toggle="dropdown">Choose Stock <span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                            <li><a href="#">AMZN</a></li>
+                            <li><a href="#">GOOG</a></li>
+                            <li><a href="#">AAPL</a></li>
+                            <li><a href="#">TCS</a></li>
+                          </ul>
+                        </div><!-- /btn-group -->    
+                    </td>
+                    <td>
+                          <div class="btn-group selection2">
+                            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Choose Stock <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">AMZN</a></li>
+                              <li><a href="#">GOOG</a></li>
+                              <li><a href="#">AAPL</a></li>
+                              <li><a href="#">TCS</a></li>
+                            </ul>
+                          </div><!-- /btn-group -->
+                    </td>
+                    <td>
+                          <div class="btn-group selection3">
+                            <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Choose Stock <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">AMZN</a></li>
+                              <li><a href="#">GOOG</a></li>
+                              <li><a href="#">AAPL</a></li>
+                              <li><a href="#">TCS</a></li>
+                            </ul>
+                          </div><!-- /btn-group -->
+                    </td>
+                  </tr>
+                  <tr><!-- <tr><div class="loader" id="loader"></div> -->
+                    <td></td>
+                    <td><br><br><canvas style="width: 200px; height: 100px" id="line-chart"></canvas></td>
+                    <td>
+                      <br><br><br><br><br><br>
+                      <table class="table table-hover" id="resulttable">
+                      </table>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+      </div> 
+
+     <div class="textbuttons">
+      <button type="button" class="btn btn-warning" onclick="analyse();">Analyse</button>
+     </div>
+     <br><br>
+    <div class="textbuttons">
+      <p id='output'></p>   
+    </div>
+</div>
+
+<script type="text/javascript">
+    var stock1;
+    var stock2;
+    var stock3;    
+
+    $(".dropdown-menu li a").click(function() {
+      $(this).parents(".selection1").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+      $(this).parents(".selection1").find('.btn').val($(this).data('value'));
+      stock1 = $(this).text();
+
+      $(this).parents(".selection2").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+      $(this).parents(".selection2").find('.btn').val($(this).data('value'));
+      stock2 = $(this).text();
+
+      $(this).parents(".selection3").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+      $(this).parents(".selection3").find('.btn').val($(this).data('value'));
+      stock3 = $(this).text();
+    })
+
+
+    var ctx = document.getElementById('line-chart').getContext('2d');
+    // var chart = new Chart(ctx, {
+    //     // The type of chart we want to create
+    //     type: 'line',
+
+    //     // The data for our dataset
+    //     data: {
+    //         labels: [],
+    //         datasets: [{
+    //         label: "",
+    //         fill: false,
+    //         lineTension: 0.1,
+    //         borderColor: "Grey", // The main line color
+    //         borderCapStyle: 'square',
+    //         borderDash: [], // try [5, 15] for instance
+    //         borderDashOffset: 0.0,
+    //         borderJoinStyle: 'miter',
+    //         pointBorderColor: "black",
+    //         pointBackgroundColor: "white",
+    //         pointBorderWidth: 1,
+    //         pointHoverRadius: 8,
+    //         pointHoverBackgroundColor: "Grey",
+    //         pointHoverBorderColor: "Grey",
+    //         pointHoverBorderWidth: 2,
+    //         pointRadius: 3,
+    //         pointHitRadius: 7,
+    //         // notice the gap in the data and the spanGaps: true
+    //         data: [],
+    //       },{
+    //         label: "",
+    //         fill: false,
+    //         lineTension: 0.1,
+    //         borderColor: "blue", // The main line color
+    //         borderCapStyle: 'square',
+    //         borderDash: [], // try [5, 15] for instance
+    //         borderDashOffset: 0.0,
+    //         borderJoinStyle: 'miter',
+    //         pointBorderColor: "black",
+    //         pointBackgroundColor: "white",
+    //         pointBorderWidth: 1,
+    //         pointHoverRadius: 8,
+    //         pointHoverBackgroundColor: "blue",
+    //         pointHoverBorderColor: "blue",
+    //         pointHoverBorderWidth: 2,
+    //         pointRadius: 3,
+    //         pointHitRadius: 7,
+    //         // notice the gap in the data and the spanGaps: true
+    //         data: [],
+    //       },{
+    //         label: "",
+    //         fill: false,
+    //         lineTension: 0.1,
+    //         borderColor: "red", // The main line color
+    //         borderCapStyle: 'square',
+    //         borderDash: [], // try [5, 15] for instance
+    //         borderDashOffset: 0.0,
+    //         borderJoinStyle: 'miter',
+    //         pointBorderColor: "black",
+    //         pointBackgroundColor: "white",
+    //         pointBorderWidth: 1,
+    //         pointHoverRadius: 8,
+    //         pointHoverBackgroundColor: "red",
+    //         pointHoverBorderColor: "red",
+    //         pointHoverBorderWidth: 2,
+    //         pointRadius: 3,
+    //         pointHitRadius: 7,
+    //         // notice the gap in the data and the spanGaps: true
+    //         data: []
+    //       }]
+    //     },
+
+    //     // Configuration options go here
+    //     options: {}
+    // });
+
+    function numberRange (start, end) {
+      return new Array(end - start).fill().map((d, i) => i + start);
+    }
+
+    function draw(data1, data2, data3, label1, label2, label3){
+            start = 0
+            end = data1.length
+            label = numberRange(start, end)
+            var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                labels: label,
+                datasets: [{
+                label: label1,
+                fill: false,
+                lineTension: 0.1,
+                borderColor: "Grey", // The main line color
+                borderCapStyle: 'square',
+                borderDash: [], // try [5, 15] for instance
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "black",
+                pointBackgroundColor: "white",
+                pointBorderWidth: 1,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: "Grey",
+                pointHoverBorderColor: "Grey",
+                pointHoverBorderWidth: 2,
+                pointRadius: 3,
+                pointHitRadius: 7,
+                // notice the gap in the data and the spanGaps: true
+                data: data1,
+              },{
+                label: label2,
+                fill: false,
+                lineTension: 0.1,
+                borderColor: "blue", // The main line color
+                borderCapStyle: 'square',
+                borderDash: [], // try [5, 15] for instance
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "black",
+                pointBackgroundColor: "white",
+                pointBorderWidth: 1,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: "blue",
+                pointHoverBorderColor: "blue",
+                pointHoverBorderWidth: 2,
+                pointRadius: 3,
+                pointHitRadius: 7,
+                // notice the gap in the data and the spanGaps: true
+                data: data2,
+              },{
+                label: label3,
+                fill: false,
+                lineTension: 0.1,
+                borderColor: "red", // The main line color
+                borderCapStyle: 'square',
+                borderDash: [], // try [5, 15] for instance
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "black",
+                pointBackgroundColor: "white",
+                pointBorderWidth: 1,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: "red",
+                pointHoverBorderColor: "red",
+                pointHoverBorderWidth: 2,
+                pointRadius: 3,
+                pointHitRadius: 7,
+                // notice the gap in the data and the spanGaps: true
+                data: data3
+              }]
+            },
+
+            // Configuration options go here
+            options: {}
+        });
+    }
+
+    function analyse(){
+      start_date = document.getElementById('start_date').value;
+      stop_date = document.getElementById('stop_date').value;
+
+      var URL = 'http://0.0.0.0:5555/getmetrics'
+      var dataString = "stock1="+stock1+"&stock2="+stock2+"&stock3="+stock3+"&start_date="+start_date+"&end_date="+stop_date;
+      
+      $.ajax({
+          type: 'POST',
+          url: URL,
+          data: dataString,
+          success: function(resp) {
+
+            stock = Object.keys(resp);
+            console.log(resp[stock[0]]['data']);
+
+            draw(resp[stock[0]]['data'], resp[stock[1]]['data'], resp[stock[2]]['data'], stock[0], stock[1], stock[2])
+
+            table = '<thead><th scope="col"></th><th scope="col">'+stock[0]+'</th><th scope="col">'+stock[1]+'</th><th scope="col">'+stock[2]+'</th></thead><tbody><tr><td><b>Sharpe</b></td><td>'+resp[stock[0]]['metrics'][0]+'</td><td>'+resp[stock[1]]['metrics'][0]+'</td><td>'+resp[stock[2]]['metrics'][0]+'</td></tr><tr><td><b>Sortino</b></td><td>'+resp[stock[0]]['metrics'][1]+'</td><td>'+resp[stock[1]]['metrics'][1]+'</td><td>'+resp[stock[2]]['metrics'][1]+'</td></tr></tbody>'
+
+            document.getElementById('resulttable').innerHTML = table;
+
+            txt = '<font size="5px">You should prefer <b>'+resp['best']+'</b> over others as per <b>Sortino Ratio</b> calculation</font></p><p><i>This suggestion by no means is guranteed. I have written a detailed blog on these metrics and their drawbacks. Please feel free to read <a href="https://prakhartechvizblogspot.com">here</a></i></p>'
+            
+            document.getElementById('output').innerHTML = txt;
+
+          }
+      });
+    }
+  
+</script>
+  
+</body>
+</html>
